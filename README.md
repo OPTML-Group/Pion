@@ -32,7 +32,7 @@ This is the official code repository for the paper [**"Rethinking Muon
 Beyond Pretraining: Spectral Failures and High-Pass Remedies for VLA and
 RLVR"**](https://arxiv.org/abs/2605.19282), which introduces **Pion**
 (s**P**ectral h**I**gh-pass **O**ptimization on mome**N**tum) -- a
-drop-in replacement for Muon designed for post-pretraining regimes such
+drop-in replacement for Muon designed for regimes such
 as **vision-language-action** (VLA) training and **reinforcement
 learning with verifiable rewards** (RLVR). See the
 [project page](https://chongyu-fan.netlify.app/posts/pion/) for more.
@@ -218,7 +218,3 @@ This codebase builds on the excellent
 ## Contributors
 
 * [Chongyu Fan](https://a-f1.github.io/)
-
-## License
-
-MIT
