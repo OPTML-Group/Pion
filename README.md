@@ -37,9 +37,22 @@ as **vision-language-action** (VLA) training and **reinforcement
 learning with verifiable rewards** (RLVR). See the
 [project page](https://chongyu-fan.netlify.app/posts/pion/) for more.
 
+<table align="center" width="100%">
+  <tr>
+    <td align="center" width="25%"><img src="assets/iter_NS.png" width="100%" /></td>
+    <td align="center" width="25%"><img src="assets/iter_P.png" width="100%" /></td>
+    <td align="center" width="25%"><img src="assets/iter_S.png" width="100%" /></td>
+    <td align="center" width="25%"><img src="assets/iter_pion_mix.png" width="100%" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>(a) Muon NS</sub></td>
+    <td align="center"><sub>(b) Promotion <i>f</i><sub>p</sub></sub></td>
+    <td align="center"><sub>(c) Suppression <i>f</i><sub>s</sub></sub></td>
+    <td align="center"><sub>(d) High-pass NS</sub></td>
+  </tr>
+</table>
+
 <p align="center">
-  <img src="assets/high_pass_ns.png" width="100%" />
-  <br>
   <em>Visualization of <code>f(&sigma;)</code> over
   <code>&sigma; &in; [0, 1]</code>, with <code>f(&sigma;) = &sigma;</code>
   shown as the identity reference.
