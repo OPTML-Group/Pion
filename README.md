@@ -6,7 +6,7 @@
 [![project page](https://img.shields.io/badge/Project_Page-Link-green)](https://chongyu-fan.netlify.app/posts/pion/)
 [![issues](https://img.shields.io/badge/Issues-Welcome!-yellow)](https://github.com/OPTML-Group/Pion/issues)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 [![PyTorch](https://img.shields.io/badge/PyTorch-%E2%89%A52.1-ee4c2c)](https://pytorch.org/)
 
 </div>
