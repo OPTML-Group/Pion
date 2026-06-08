@@ -109,3 +109,30 @@ checkpoints/
 outputs/
 results/
 cache/
+
+# ---------------------------------------------------------------------------
+# Sub-repo runtime artifacts (apply at any depth, not just top level)
+# ---------------------------------------------------------------------------
+**/checkpoints/
+**/outputs/
+**/logs/
+**/wandb/
+**/torchrun_logs/
+**/data/
+**/.cache/
+**/.venv/
+
+# ---------------------------------------------------------------------------
+# Heavy model weights / datasets (any depth)
+# ---------------------------------------------------------------------------
+**/pretrained_models/
+**/*.parquet
+**/*.tfrecord*
+**/*.arrow
+
+# ---------------------------------------------------------------------------
+# Third-party clones inside sub-repos (LIBERO etc., users clone these)
+# ---------------------------------------------------------------------------
+**/third_party/LIBERO/
+**/third_party/LIBERO-plus/
+

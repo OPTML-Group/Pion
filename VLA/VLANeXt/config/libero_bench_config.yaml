@@ -1,0 +1,21 @@
+data:
+  augmentation:
+    center_crop: true
+    center_crop_ratio: 0.9
+
+# reconfig the difffusion inference settings (applicable if model.loss_type is "diffusion")
+model:
+  diffusion_steps: 5
+  scheduler_type: "flow_match" # Options: "ddpm", "ddim", "flow_match"
+
+eval:
+  # Override at the command line: `--checkpoint /path/to/checkpoint_NNNN.pt`
+  finetuned_checkpoint: "checkpoints/VLANeXt/<config_name>/<run_name>/checkpoint_10000.pt"
+  task_suite_name: "libero_spatial" # Options: libero_spatial, libero_object, libero_goal, libero_10
+  num_steps_wait: 10
+  num_steps_execute: 8 # Number of actions to execute from the predicted chunk
+  num_trials_per_task: 50
+  seed: 42
+  image_size: 256
+  resume_episodes: 0    # for resume, total episodes already completed across all tasks, 0 for fresh start
+  resume_successes: 0   # for resume, total successes achieved in those completed episodes, 0 for fresh start

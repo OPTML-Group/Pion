@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="VLANeXt: Recipes for Building Strong VLA Models">
+  <meta name="keywords" content="VLA, Robotics, Vision-Language-Action">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VLANeXt: Recipes for Building Strong VLA Models</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<!-- Full-width top banner -->
+<section class="top-banner">
+  <img src="./static/images/longhead.png" alt="VLANeXt banner" />
+</section>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">VLANeXt: Recipes for Building Strong VLA Models</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Xiao-Ming Wu, Bin Fan, Kang Liao, Jian-Jian Jiang, Runze Yang, Yihang Luo, Zhonghua Wu, Wei-Shi Zheng, Chen Change Loy*
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors" style="font-family: 'Google Sans', sans-serif;">
+            <span class="author-block">S-Lab, Nanyang Technological University;</span>
+            <span class="author-block">Sun Yat-sen University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- arXiv Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2602.18532" class="external-link button is-normal is-rounded is-danger">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/DravenALG/VLANeXt" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>VLANeXt Code</span>
+                  </a>
+              </span>
+              <!-- Hugging Face Link. -->
+              <span class="link-block">
+                <a href="https://huggingface.co/DravenALG/VLANeXt" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <p style="font-size:18px">🤗</p>
+                  </span>
+                  <span>Hugging Face</span>
+                </a>
+              </span>
+              <!-- Awesome VLA Link. -->
+              <span class="link-block">
+                <a href="https://github.com/DravenALG/awesome-vla" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Awesome VLA</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+
+          <div class="columns is-centered has-text-centered">
+            <div class="column is-full-width">
+              <div class="content has-text-justified">
+                <img id="roadmap-video" src="./static/images/roadmap_page.png" data-gif="./static/videos/roadmap_page.gif" width="100%" style="border-radius: 5px; border: none; box-shadow: none; display: block; clip-path: inset(0 0 5px 0);" alt="roadmap-video" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Following the rise of large foundation models, Vision–Language–Action models (VLAs) emerged, leveraging strong visual and language understanding for general-purpose policy learning. Yet, the current VLA landscape remains fragmented and exploratory. Although many groups have proposed their own VLA models, inconsistencies in training protocols and evaluation settings make it difficult to identify which design choices truly matter. To bring structure to this evolving space, we reexamine the VLA design space under a unified framework and evaluation setup. Starting from a simple VLA baseline similar to RT-2 and OpenVLA, we systematically dissect design choices along three dimensions: foundational components, perception essentials, and action modelling perspectives. From this study, we distill 12 key findings that together form a practical recipe for building strong VLA models. The outcome of this exploration is a simple yet effective model, VLANeXt. VLANeXt outperforms prior state-of-the-art methods on the LIBERO and LIBERO-plus benchmarks and demonstrates strong generalization in real-world experiments. We will release a unified, easy-to-use codebase that serves as a common platform for the community to reproduce our findings, explore the design space, and build new VLA variants on top of a shared foundation. 
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Method Overall. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Method Overall</h2>
+        <div class="content has-text-centered">
+          <p class="has-text-left">
+            We re-examine the VLA design space through a systematic study along three key dimensions: <strong>foundational components</strong>, <strong>perception essentials</strong>, and <strong>action modelling</strong>. This structured exploration yields 12 findings that together form a practical recipe for building strong VLA models.
+          </p>
+          <img src="./static/images/roadmap.png" width="75%" alt="roadmap"/>
+          <br>
+          <br>
+          <p class="has-text-left">The resulting VLANeXt framework integrates the best practices identified from our exploration into a unified architecture.</p>
+          <img src="./static/images/framework.png" width="100%" alt="framework"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Tables. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Recipes Exploration Results</h2>
+        <div class="content has-text-centered">
+          <p class="has-text-left">
+            We conduct extensive ablations across 12 design spaces. The table below summarizes each finding with the variants in each space, serving as a complehensive recipe for practitioners.
+          </p>
+          <img src="./static/images/recipies_table.png" width="100%" alt="recipes table"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">LIBERO Benchmark Results</h2>
+        <div class="content has-text-centered">
+          <p class="has-text-left">
+          VLANeXt achieves state-of-the-art performance. It outperforms strong baselines, demonstrating its versatility across diverse manipulation scenarios with varying task configurations.
+          </p>
+          <img src="./static/images/libero_table.png" width="50%" alt="LIBERO benchmark table"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">LIBERO-Plus Benchmark Results</h2>
+        <div class="content has-text-centered">
+          <p class="has-text-left">
+            LIBERO-Plus introduces seven categories of systematic perturbations, background, camera, language, layout, lighting, noise, and robot changes, to stress-test policy robustness. VLANeXt maintains consistently high success rates across all perturbation types, while competing methods exhibit performance degradation, validating the robustness of our design choices.
+          </p>
+          <img src="./static/images/libero_plus_table.png" width="100%" alt="LIBERO-Plus benchmark table"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Real World Video Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Real World Demos</h2>
+    <div class="content has-text-left">
+      <p>
+        We deploy VLANeXt on physical robot platforms to validate real-world robustness. The model successfully executes a variety of everyday manipulation tasks, including table cleaning, drawer manipulation, bimanual table cleaning, and bimanual lifting, on both single-arm and bimanual-arm setups, demonstrating reliable performance.
+      </p>
+    </div>
+    <div class="columns is-centered is-multiline">
+      <div class="column is-3">
+        <div class="content">
+          <video id="real-world-1" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none; display: block; margin: 0 auto;">
+             <source src="./static/videos/real_world_1.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">clean table (single arm)</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+          <video id="real-world-2" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none; display: block; margin: 0 auto;">
+             <source src="./static/videos/real_world_2.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">clean table (single arm)</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+          <video id="real-world-3" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none; display: block; margin: 0 auto;">
+             <source src="./static/videos/real_world_3.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">open drawer and place object (single arm)</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+          <video id="real-world-4" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none; display: block; margin: 0 auto;">
+             <source src="./static/videos/real_world_4.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">open drawer and place object (single arm)</p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="content">
+          <video id="real-world-5" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none; display: block; margin: 0 auto;">
+             <source src="./static/videos/real_world_5.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">bimanual clean table (bimanual arms)</p>
+        </div>
+      </div>
+      <div class="column is-6">
+        <div class="content">
+          <video id="real-world-6" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none; display: block; margin: 0 auto;">
+             <source src="./static/videos/real_world_6.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">lifting (bimanual arms)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Libero Benchmark Video Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Libero Benchmark Demos</h2>
+    <div class="content has-text-left">
+      <p>
+        Qualitative rollouts from the LIBERO benchmark illustrate VLANeXt's ability to follow diverse natural language instructions and perform precise manipulation across varied environments and object configurations.
+      </p>
+    </div>
+    <div class="columns is-centered">
+      <div class="column best-method">
+        <div class="content">
+          <video id="libero-1" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+            <source src="./static/videos/libero_1.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">pick up the black bowl between the plate and the ramekin and place it on the plate</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content">
+          <video id="libero-2" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+            <source src="./static/videos/libero_2.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">pick up the tomato sauce and place it in the basket</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content">
+          <video id="libero-3" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+            <source src="./static/videos/libero_3.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">open the middle drawer of the cabinet</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="content">
+          <video id="libero-4" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+            <source src="./static/videos/libero_4.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">put both the alphabet soup and the tomato sauce in the basket</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Libero-Plus Benchmark Video Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Libero-Plus Benchmark Demos</h2>
+     <div class="content has-text-left">
+      <p>
+        Qualitative rollouts from LIBERO-Plus demonstrate VLANeXt's robustness, where the model complete the task <strong>"pick up the black bowl next to the plate and place it on the plate"</strong> under seven distinct perturbation categories. Despite significant environmental changes, the model maintains stable and accurate manipulation.
+      </p>
+    </div>
+    <!-- Row 1: 4 videos -->
+    <div class="columns is-centered">
+      <div class="column is-3">
+        <div class="content">
+          <video id="libero-plus-1" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_1.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">background perturbation</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+           <video id="libero-plus-2" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_2.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">camera perturbation</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+           <video id="libero-plus-3" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_3.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">language perturbation</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+           <video id="libero-plus-4" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_4.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">layout perturbation</p>
+        </div>
+      </div>
+    </div>
+    <!-- Row 2: 3 videos -->
+    <div class="columns is-centered">
+      <div class="column is-3">
+        <div class="content">
+          <video id="libero-plus-5" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_5.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">light perturbation</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+           <video id="libero-plus-6" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_6.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">noise perturbation</p>
+        </div>
+      </div>
+      <div class="column is-3">
+        <div class="content">
+           <video id="libero-plus-7" autoplay controls muted loop playsinline width="100%" style="border-radius: 5px; border: none;">
+             <source src="./static/videos/libero_plus_7.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-centered">robot perturbation</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>
+      @article{wu2026vlanext,
+        title={VLANeXt: Recipes for Building Strong VLA Models}, 
+        author={Xiao-Ming Wu and Bin Fan and Kang Liao and Jian-Jian Jiang and Runze Yang and Yihang Luo and Zhonghua Wu and Wei-Shi Zheng and Chen Change Loy},
+        journal={arXiv preprint arXiv:2602.18532},
+        year={2026},
+      }
+    </code></pre>
+  </div>
+</section>
+
+<script src="index.js"></script>
+</body>
+</html>

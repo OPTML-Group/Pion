@@ -102,108 +102,76 @@ zero.
 
 ## What's in this repo
 
-A single self-contained file [`pion.py`](pion.py) that implements four
-optimizers, all sharing the same distributed async `all_gather` skeleton:
+```
+Pion/
+├── VLA/                       # Vision-Language-Action experiments
+│   ├── VLAAdapter/            # VLA-Adapter
+│   │   └── pion_optim/        # Muon / DefaultPion / LowRankMuon
+│   ├── VLANeXt/               # VLANeXt
+│   │   └── pion_optim/        # Muon / DefaultPion
+│   └── openpi/                # π0.5 on real Franka FR3
+│       └── src/openpi/training/muon_optim.py
+│                              # MuonAdamW / DefaultPionAdamW
+└── RL/                        # RLVR experiments
+    └── verl/                  # GRPO + GMPO on Qwen3-1.7B / 4B, GSM8K + MATH
+        └── verl/utils/muon.py
+                               # MuonAdamW / DefaultPionAdamW / PerHeadMuonAdamW / PerHeadPionAdamW
+```
 
-| Optimizer        | What it does                                                                                                          |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `Muon`           | The original Muon baseline (Newton–Schulz orthogonalization).                                                         |
-| `DefaultPion`    | Pion with the two-stage **Promotion + Suppression** (high-pass NS) iteration applied to the whole matrix.             |
-| `PerHeadPion`    | Pion applied **independently per attention head** through a reshape, preserving pretrained per-head heterogeneity.    |
-| `LowRankMuon`    | Muon variant that uses exact SVD to project the update onto the top-`k` singular subspace before orthogonalization.   |
+Across all sub-repos we maintain the **same five optimizer families**,
+each paired into a **base** form and an **AdamW-fused** form. Which form
+a sub-repo ships depends on whether its training framework can hold
+**multiple** `torch.optim.Optimizer` instances at once:
+
+* `VLA-Adapter` / `VLANeXt` drive several optimizers in the same training
+  loop (one Muon / Pion instance per modality bucket plus a
+  `torch.optim.AdamW` for the 1-D / embedding / output-head bucket), so
+  they ship the **base** classes and let the trainer call `step()` on
+  each.
+* `openpi` and `verl` are wrapped by frameworks (openpi's `Trainer`,
+  verl's Hydra + FSDP2 config) that expose only a **single** optimizer
+  slot per model; on those we ship the **AdamW-fused** variants, which
+  apply the Muon / Pion polynomial to `ndim ≥ 2` parameters and AdamW to
+  `ndim < 2` parameters inside one `step()` call.
+
+Each sub-repo only ships the variants its recipes actually use (see the
+tree above).
+
+| Algorithm                                  | Base class      | AdamW-fused class      |
+| ------------------------------------------ | --------------- | ---------------------- |
+| Muon (NS on the whole matrix)              | `Muon`          | `MuonAdamW`            |
+| Muon (NS on per attention head)            | —               | `PerHeadMuonAdamW`     |
+| Pion (high-pass NS on the whole matrix)    | `DefaultPion`   | `DefaultPionAdamW`     |
+| Pion (high-pass NS on per attention head)  | —               | `PerHeadPionAdamW`     |
+| LowRankMuon                                | `LowRankMuon`   | —                      |
+
+Each sub-repo is a pruned, vendored copy of an upstream training
+codebase with the Pion optimizer wired in and three drop-in run scripts
+(`run_adamw.sh`, `run_muon.sh`, `run_pion.sh`). See each sub-repo's
+`README.md` for full environment setup, data preparation and run
+commands.
 
 
 ## Getting Started
 
-### Quick start: drop-in replacement for AdamW / Muon
+The optimizers are not packaged as a top-level library; they live next
+to the training code that uses them. Pick your task and follow the
+sub-repo README:
 
-Like the original Muon, Pion optimizers should be applied **only to 2D
-weight matrices** (and 4D conv filters). Embedding layers, the LM head,
-layer-norms and any 0/1-D parameters should be routed to AdamW.
+| Sub-repo                                           | Backbone / task                                              |
+| -------------------------------------------------- | ------------------------------------------------------------ |
+| [`VLA/VLAAdapter`](VLA/VLAAdapter/README.md)       | VLA-Adapter                                                  |
+| [`VLA/VLANeXt`](VLA/VLANeXt/README.md)             | VLANeXt                                                      |
+| [`VLA/openpi`](VLA/openpi/README.md)               | π<sub>0.5</sub> on Franka FR3                                |
+| [`RL/verl`](RL/verl/README.md)                     | GRPO / GMPO on Qwen3-1.7B / 4B with GSM8K + MATH             |
 
-```python
-import torch
-from Pion import DefaultPion, PerHeadPion
+Inside each sub-repo:
 
-muon_params, adam_params = [], []
-for name, p in model.named_parameters():
-    if p.ndim >= 2 and "embed" not in name and "lm_head" not in name:
-        muon_params.append(p)
-    else:
-        adam_params.append(p)
-
-# Single-GPU
-optimizer = DefaultPion(
-    muon_params,
-    lr=1e-5,
-    promotion_steps=0,
-    scale_factor=2.0,
-    rank=0, world_size=1,
-)
-adamw = torch.optim.AdamW(adam_params, lr=1e-5)
-```
-
-Defaults are `promotion_steps=0`, `ns_steps=5` (pure-Suppression /
-high-pass), and `scale_factor=2.0`.
-
-### Per-head mode (recommended for RLVR / post-training)
-
-`PerHeadPion` applies the high-pass NS iteration *independently per
-attention head*, which is critical when the model already has per-head
-specialization from pretraining (the regime our paper studies).
-
-```python
-from Pion import PerHeadPion
-
-# Q/K/V projections: heads on the OUTPUT side
-qkv_optim = PerHeadPion(
-    qkv_params,
-    lr=1e-5,
-    promotion_steps=0,
-    scale_factor=2.0,
-    num_heads=model.config.num_attention_heads,
-    head_split_dim=0,
-    rank=rank, world_size=world_size,
-)
-
-# O projection: heads on the INPUT side
-o_optim = PerHeadPion(
-    o_params,
-    lr=1e-5,
-    promotion_steps=0,
-    scale_factor=2.0,
-    num_heads=model.config.num_attention_heads,
-    head_split_dim=1,
-    rank=rank, world_size=world_size,
-)
-```
-
-GQA is handled automatically: Q/K/V/O share the same scale because the
-larger of the two head dimensions equals `hidden` for both Q-heads and
-KV-heads. If `num_heads` does not divide the target axis, the optimizer
-transparently falls back to a whole-matrix update.
-
-### Multi-GPU (FSDP / DDP)
-
-All four optimizers expect `rank` and `world_size`:
-
-```python
-from Pion import DefaultPion
-import torch.distributed as dist
-
-dist.init_process_group(backend="nccl")
-optimizer = DefaultPion(
-    muon_params,
-    lr=1e-5,
-    promotion_steps=0,
-    scale_factor=2.0,
-    rank=dist.get_rank(),
-    world_size=dist.get_world_size(),
-)
-```
-
-Per-parameter shards are computed locally and assembled via
-`all_gather_into_tensor`, exactly as in the upstream Muon implementation.
+* `pion_optim/` (for `VLA-Adapter` / `VLANeXt`) or
+  `*/utils/muon.py` / `*/training/muon_optim.py`
+  (for `verl` / `openpi`) contains the optimizer implementations.
+* `scripts/run_adamw.sh`, `scripts/run_muon.sh`, `scripts/run_pion.sh`
+  are the three drop-in launchers.
 
 
 ## Citation
@@ -211,22 +179,23 @@ Per-parameter shards are computed locally and assembled via
 If you find this work useful, please consider citing:
 
 ```bibtex
-@misc{fan2026rethinkingmuonpretrainingspectral,
-      title={Rethinking Muon Beyond Pretraining: Spectral Failures and High-Pass Remedies for VLA and RLVR}, 
-      author={Chongyu Fan and Gaowen Liu and Mingyi Hong and Ramana Rao Kompella and Sijia Liu},
-      year={2026},
-      eprint={2605.19282},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2605.19282}, 
+@article{fan2026rethinking,
+  title={Rethinking Muon Beyond Pretraining: Spectral Failures and High-Pass Remedies for VLA and RLVR},
+  author={Fan, Chongyu and Liu, Gaowen and Hong, Mingyi and Kompella, Ramana Rao and Liu, Sijia},
+  journal={arXiv preprint arXiv:2605.19282},
+  year={2026}
 }
 ```
 
 ## Acknowledgements
 
 This codebase builds on the excellent
-[Muon optimizer](https://github.com/KellerJordan/Muon) and
-[Flash-Muon](https://github.com/nil0x9/flash-muon).
+[Muon optimizer](https://github.com/KellerJordan/Muon),
+[Flash-Muon](https://github.com/nil0x9/flash-muon),
+[VLA-Adapter](https://github.com/OpenHelix-Team/VLA-Adapter),
+[VLANeXt](https://github.com/DravenALG/VLANeXt),
+[openpi](https://github.com/Physical-Intelligence/openpi), and
+[verl](https://github.com/verl-project/verl).
 
 ## Contributors
 

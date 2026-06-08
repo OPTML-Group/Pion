@@ -1,0 +1,24 @@
+# for VLANeXt
+huggingface_hub
+transformers==5.2.0
+diffusers
+datasets
+accelerator
+evaluate
+deepspeed
+wandb
+h5py
+opencv-python
+tensorflow==2.18.0
+tensorflow-datasets==4.9.9
+matplotlib
+rlds
+dm-reverb
+
+# for LIBERO benchmark
+imageio[ffmpeg]
+robosuite==1.4.1
+bddl
+easydict
+cloudpickle
+gym
