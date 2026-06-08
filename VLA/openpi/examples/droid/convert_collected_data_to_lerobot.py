@@ -12,9 +12,9 @@ The wrist / exterior cameras are identified using observation/camera_type in the
 
 Usage:
     uv run examples/droid/convert_collected_data_to_lerobot.py \
-        --data_dir /egr/research-optml/chongyu/data/collected_data \
+        --data_dir <DATA_ROOT>/collected_data \
         --task_name cubic_to_bowl \
-        --repo_name chongyu/cubic_to_bowl
+        --repo_name your-hf-username/cubic_to_bowl
 
 The resulting dataset is saved under $LEROBOT_HOME / <repo_name>.
 

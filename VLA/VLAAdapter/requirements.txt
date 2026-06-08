@@ -145,7 +145,7 @@ pydantic==2.12.3
 pydantic_core==2.41.4
 pyglet==2.1.9
 Pygments==2.19.2
-pyhash @ file:///home/conda/feedstock_root/build_artifacts/pyhash_1681834248514/work
+pyhash
 pynput==1.8.1
 PyOpenGL @ git+https://github.com/mmatl/pyopengl.git@76d1261adee2d3fd99b418e75b0416bb7d2865e6
 pyparsing==3.2.5
