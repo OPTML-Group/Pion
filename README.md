@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
 [![PyTorch](https://img.shields.io/badge/PyTorch-%E2%89%A52.1-ee4c2c)](https://pytorch.org/)
-
+[![Papers with Code: SOTA on LIBERO-Object](https://paperswithcode.co/api/v1/papers/2605.19282/leaderboard-badge.svg?eval=14126&live=1)](https://paperswithcode.co/benchmark/libero-object?task=robotics&eval=14126)
 </div>
 
 <p align="center">
