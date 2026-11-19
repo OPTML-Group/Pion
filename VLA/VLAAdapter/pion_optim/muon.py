@@ -411,7 +411,7 @@ class LowRankMuon(torch.optim.Optimizer):
                         U_k = U[:, :k_eff]
                         Vh_k = Vh[:k_eff, :]
                         g_ortho = U_k @ Vh_k
-                        g = g_ortho.to(g.dtype).flatten()
+                        g = g_ortho.to(update_buffer.dtype).flatten()  # bf16 all-gather buffer, also for fp32 weights
                 else:
                     g = update_buffer_views[self.rank]
                     g.zero_()

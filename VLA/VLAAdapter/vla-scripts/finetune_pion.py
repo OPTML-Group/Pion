@@ -437,11 +437,12 @@ def run_forward_pass(
             multi_layer_hidden_states.append(all_hidden_states)
         multi_layer_hidden_states = torch.cat(multi_layer_hidden_states, dim = 1)
 
-        predicted_actions = action_head.module.predict_action(
-            multi_layer_hidden_states,
-            proprio=batch["proprio"] if use_proprio else None,
-            proprio_projector=proprio_projector if use_proprio else None,
-            phase=cfg.phase,
+        with torch.autocast("cuda", dtype=torch.bfloat16):
+            predicted_actions = action_head.module.predict_action(
+                multi_layer_hidden_states,
+                proprio=batch["proprio"] if use_proprio else None,
+                proprio_projector=proprio_projector if use_proprio else None,
+                phase=cfg.phase,
             )
 
         loss = torch.nn.L1Loss()(predicted_actions, ground_truth_actions)
@@ -815,7 +816,9 @@ def finetune(cfg: FinetuneConfig) -> None:
                 load_for_training=True,
                 )
         config = AutoConfig.from_pretrained("pretrained_models/configs", trust_remote_code=True)
-        vla = AutoModelForVision2Seq.from_config(config, torch_dtype=torch.bfloat16, trust_remote_code=True).to(device_id)  # Create a new model with configuration, the parameters are randomly initialized
+        # Trainable weights stay in fp32 (the master copy) and compute runs in bf16 under autocast: AdamW, Muon and Pion
+        # would otherwise write every update straight into bf16, which rounds updates below ~1/512 of a weight away.
+        vla = AutoModelForVision2Seq.from_config(config, torch_dtype=torch.float32, trust_remote_code=True).to(device_id)  # Create a new model with configuration, the parameters are randomly initialized
         # for name, param in model.named_parameters():
         #     print(f"{name}: {param.shape}")
         replace_map = [
@@ -848,7 +851,7 @@ def finetune(cfg: FinetuneConfig) -> None:
         RAW_STATE_DICT ={}
         vla = AutoModelForVision2Seq.from_pretrained(
             cfg.config_file_path,
-            torch_dtype=torch.bfloat16,
+            torch_dtype=torch.float32,
             low_cpu_mem_usage=False,
             trust_remote_code=False,
             ).to(device_id)
@@ -905,7 +908,7 @@ def finetune(cfg: FinetuneConfig) -> None:
             cfg,
             device_id,
             {"llm_dim": vla.module.llm_dim, "proprio_dim": PROPRIO_DIM},
-            to_bf16=True,
+            to_bf16=False,
         )
 
     # If applicable, instantiate continuous action head for L1 regression
@@ -921,7 +924,7 @@ def finetune(cfg: FinetuneConfig) -> None:
             "action_dim": ACTION_DIM,
             "use_pro_version": cfg.use_pro_version,
             },
-        to_bf16=True,
+        to_bf16=False,
         )
 
     # Get number of vision patches
